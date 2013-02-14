@@ -4,6 +4,11 @@
 <dict>
 	<key>CFBundleIdentifier</key>
 	<string>com.plexapp.agents.fanarttv</string>
+	<key>PlexAgentAttributionText</key>
+	<string>
+		&lt;a href=&quot;http://fanart.tv&quot;&gt;Fanart.tv&lt;/a&gt; is a community driven website providing fanart and logos for TV shows and movies.&lt;br/&gt;
+		Have some fanart to share? Visit &lt;a href=&quot;http://fanart.tv&quot;&gt;fanart.tv&lt;/a&gt;
+	</string>
 	<key>PlexFrameworkVersion</key>
 	<string>2</string>
 	<key>PlexPluginClass</key>
