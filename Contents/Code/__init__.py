@@ -41,10 +41,8 @@ class FanartTVAgent(Agent.Movies):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try:
-						metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview))
-					except:
-						pass
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=1.0))
+					except: pass
 
 		metadata.art.validate_keys(valid_names)
 
@@ -80,9 +78,7 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try:
-						metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview))
-					except:
-						pass
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=1.0))
+					except: pass
 
 		metadata.art.validate_keys(valid_names)
