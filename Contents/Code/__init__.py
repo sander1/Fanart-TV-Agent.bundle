@@ -102,17 +102,17 @@ class FanartTVAgent(Agent.Artist):
 	def search(self, results, media, lang):
 
 		# Get the MusicBrainz id from the Last.fm Agent
-		mbid = Core.messaging.call_external_function(
+		mb_id = Core.messaging.call_external_function(
 			'com.plexapp.agents.lastfm',
 			'MessageKit:GetMbIdForArtist',
 			kwargs = dict(
-				metadata_id = media.primary_metadata.id
+				artist = media.primary_metadata.title
 			)
 		)
 
-		if mbid:
+		if mb_id:
 			results.Append(MetadataSearchResult(
-				id = mbid,
+				id = mb_id,
 				score = 100
 			))
 
@@ -124,8 +124,8 @@ class FanartTVAgent(Agent.Artist):
 
 		if not json_obj:
 			try:
-				mbid = XML.ElementFromURL(MB_ARTIST_API % metadata.id).xpath('//a:artist/@id', namespaces=MB_NS)[0]
-				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % mbid, sleep=2.0)
+				mb_id = XML.ElementFromURL(MB_ARTIST_API % metadata.id).xpath('//a:artist/@id', namespaces=MB_NS)[0]
+				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % mb_id, sleep=2.0)
 			except:
 				json_obj = None
 
@@ -149,8 +149,8 @@ class FanartTVAgent(Agent.Artist):
 
 		if not json_obj:
 			try:
-				mbid = XML.ElementFromURL(MB_ARTIST_API % metadata.id).xpath('//a:artist/@id', namespaces=MB_NS)[0]
-				json_obj = JSON.ObjectFromURL(ARTIST_POSTER_URL % mbid, sleep=2.0)
+				mb_id = XML.ElementFromURL(MB_ARTIST_API % metadata.id).xpath('//a:artist/@id', namespaces=MB_NS)[0]
+				json_obj = JSON.ObjectFromURL(ARTIST_POSTER_URL % mb_id, sleep=2.0)
 			except:
 				json_obj = None
 
@@ -166,4 +166,4 @@ class FanartTVAgent(Agent.Artist):
 					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=1.0))
 					except: pass
 
-		metadata.art.validate_keys(valid_names)
+		metadata.posters.validate_keys(valid_names)
