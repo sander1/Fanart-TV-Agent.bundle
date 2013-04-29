@@ -120,7 +120,9 @@ class FanartTVAgent(Agent.Artist):
 				try:
 					artist_mbid = XML.ElementFromURL(MB_ARTIST % artist_mbid).xpath('//a:artist/@id', namespaces=MB_NS)[0]
 				except:
-					pass
+					artist_mbid = None
+
+		if artist_mbid:
 
 			results.Append(MetadataSearchResult(
 				id = artist_mbid,
