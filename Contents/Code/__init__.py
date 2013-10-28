@@ -1,6 +1,7 @@
 API_KEY = '72519ab36caf49c09f69a028fb7f741d'
 MOVIE_ART_URL = 'http://api.fanart.tv/webservice/movie/%s/%%s/json/moviebackground/1/2/' % (API_KEY) # IMDb or TheMovieDB id
 TV_ART_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/showbackground/1/2/' % (API_KEY) # TheTVDB id
+TV_BANNER_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/tvbanner/1/2/' % (API_KEY) # TheTVDB id
 ARTIST_ALL_URL = 'http://api.fanart.tv/webservice/artist/%s/%%s/json/all/1/2/' % (API_KEY) # MusicBrainz artist id
 
 PREVIEW_URL = '%s/preview'
@@ -36,7 +37,11 @@ class FanartTVAgent(Agent.Movies):
 	def update(self, metadata, media, lang):
 
 		valid_names = list()
-		json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+
+		try:
+			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
 
 		if json_obj:
 			key = json_obj.keys()[0]
@@ -59,21 +64,44 @@ class FanartTVAgent(Agent.TV_Shows):
 	languages = [Locale.Language.NoLanguage]
 	primary_provider = False
 	contributes_to = [
-		'com.plexapp.agents.thetvdb'
+		'com.plexapp.agents.thetvdb',
+		'com.plexapp.agents.themoviedb'
 	]
 
 	def search(self, results, media, lang):
 
-		if media.primary_metadata:
+		if media.primary_agent == 'com.plexapp.agents.thetvdb':
 			results.Append(MetadataSearchResult(
 				id = media.primary_metadata.id,
 				score = 100
 			))
 
+		elif media.primary_agent == 'com.plexapp.agents.themoviedb':
+
+			# Get the TVDB id from the Movie Database Agent
+			tvdb_id = Core.messaging.call_external_function(
+				'com.plexapp.agents.themoviedb',
+				'MessageKit:GetTvdbId',
+				kwargs = dict(
+					tmdb_id = media.primary_metadata.id
+				)
+			)
+
+			if tvdb_id:
+				results.Append(MetadataSearchResult(
+					id = tvdb_id,
+					score = 100
+				))
+
 	def update(self, metadata, media, lang):
 
+		# Backdrops
 		valid_names = list()
-		json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+
+		try:
+			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
 
 		if json_obj:
 			key = json_obj.keys()[0]
@@ -88,6 +116,28 @@ class FanartTVAgent(Agent.TV_Shows):
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
+
+		# Banners
+		valid_names = list()
+
+		try:
+			json_obj = JSON.ObjectFromURL(TV_BANNER_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
+
+		if json_obj:
+			key = json_obj.keys()[0]
+
+			for img in json_obj[key]['tvbanner']:
+				banner_url = img['url']
+				banner_url_preview = PREVIEW_URL % banner_url
+				valid_names.append(banner_url)
+
+				if banner_url not in metadata.banners:
+					try: metadata.banners[banner_url] = Proxy.Preview(HTTP.Request(banner_url_preview, sleep=1.0))
+					except: pass
+
+		metadata.banners.validate_keys(valid_names)
 
 ####################################################################################################
 class FanartTVAgent(Agent.Artist):
@@ -114,7 +164,10 @@ class FanartTVAgent(Agent.Artist):
 
 			# MusicBrainz ids can change over time while Last.fm is still listing an older id.
 			# If we do not get any data back: check if we can use a new/different MusicBrainz id.
-			json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+			try:
+				json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+			except:
+				json_obj = None
 
 			if not json_obj:
 				try:
@@ -133,7 +186,11 @@ class FanartTVAgent(Agent.Artist):
 
 		# Artist art
 		valid_names = list()
-		json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % metadata.id, sleep=2.0)
+
+		try:
+			json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
 
 		if json_obj:
 			key = json_obj.keys()[0]
@@ -151,7 +208,11 @@ class FanartTVAgent(Agent.Artist):
 
 		# Artist posters
 		valid_names = list()
-		json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % metadata.id, sleep=2.0)
+
+		try:
+			json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
 
 		if json_obj:
 			key = json_obj.keys()[0]
@@ -195,7 +256,10 @@ class FanartTVAgent(Agent.Album):
 
 			# MusicBrainz ids can change over time while Last.fm is still listing an older id.
 			# If we do not get any data back: check if we can use a new/different MusicBrainz id.
-			json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+			try:
+				json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+			except:
+				json_obj = None
 
 			if not json_obj:
 				try:
@@ -233,7 +297,11 @@ class FanartTVAgent(Agent.Album):
 
 		# Album covers
 		valid_names = list()
-		json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+
+		try:
+			json_obj = JSON.ObjectFromURL(ARTIST_ALL_URL % artist_mbid, sleep=2.0)
+		except:
+			json_obj = None
 
 		if json_obj:
 			key = json_obj.keys()[0]
