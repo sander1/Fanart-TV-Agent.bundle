@@ -1,5 +1,6 @@
 API_KEY = '72519ab36caf49c09f69a028fb7f741d'
 MOVIE_ART_URL = 'http://api.fanart.tv/webservice/movie/%s/%%s/json/moviebackground/1/2/' % (API_KEY) # IMDb or TheMovieDB id
+MOVIE_POSTER_URL = 'http://api.fanart.tv/webservice/movie/%s/%%s/json/movieposter/1/2/' % (API_KEY) # IMDb or TheMovieDB id
 TV_ART_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/showbackground/1/2/' % (API_KEY) # TheTVDB id
 TV_BANNER_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/tvbanner/1/2/' % (API_KEY) # TheTVDB id
 ARTIST_ALL_URL = 'http://api.fanart.tv/webservice/artist/%s/%%s/json/all/1/2/' % (API_KEY) # MusicBrainz artist id
@@ -36,6 +37,7 @@ class FanartTVAgent(Agent.Movies):
 
 	def update(self, metadata, media, lang):
 
+		# Backdrops
 		valid_names = list()
 
 		try:
@@ -56,6 +58,28 @@ class FanartTVAgent(Agent.Movies):
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
+
+		# Posters
+		valid_names = list()
+
+		try:
+			json_obj = JSON.ObjectFromURL(MOVIE_POSTER_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
+
+		if json_obj:
+			key = json_obj.keys()[0]
+
+			for img in json_obj[key]['movieposter']:
+				poster_url = img['url']
+				poster_url_preview = PREVIEW_URL % poster_url
+				valid_names.append(poster_url)
+
+				if poster_url not in metadata.posters:
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=1.0))
+					except: pass
+
+		metadata.posters.validate_keys(valid_names)
 
 ####################################################################################################
 class FanartTVAgent(Agent.TV_Shows):
