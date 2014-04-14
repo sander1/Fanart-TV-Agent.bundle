@@ -40,11 +40,11 @@ class FanartTVAgent(Agent.Movies):
 
 		try:
 			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'moviebackground' in json_obj[key]:
 
 			for img in json_obj[key]['moviebackground']:
 				art_url = img['url']
@@ -62,11 +62,11 @@ class FanartTVAgent(Agent.Movies):
 
 		try:
 			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'movieposter' in json_obj[key]:
 
 			for img in json_obj[key]['movieposter']:
 				poster_url = img['url']
@@ -122,11 +122,11 @@ class FanartTVAgent(Agent.TV_Shows):
 
 		try:
 			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'showbackground' in json_obj[key]:
 
 			for img in json_obj[key]['showbackground']:
 				art_url = img['url']
@@ -144,11 +144,11 @@ class FanartTVAgent(Agent.TV_Shows):
 
 		try:
 			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'tvposter' in json_obj[key]:
 
 			for img in json_obj[key]['tvposter']:
 				poster_url = img['url']
@@ -166,11 +166,11 @@ class FanartTVAgent(Agent.TV_Shows):
 
 		try:
 			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'tvbanner' in json_obj[key]:
 
 			for img in json_obj[key]['tvbanner']:
 				banner_url = img['url']
@@ -233,11 +233,11 @@ class FanartTVAgent(Agent.Artist):
 
 		try:
 			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'artistbackground' in json_obj[key]:
 
 			for img in json_obj[key]['artistbackground']:
 				art_url = img['url']
@@ -255,11 +255,11 @@ class FanartTVAgent(Agent.Artist):
 
 		try:
 			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'artistthumb' in json_obj[key]:
 
 			for img in json_obj[key]['artistthumb']:
 				poster_url = img['url']
@@ -344,11 +344,11 @@ class FanartTVAgent(Agent.Album):
 
 		try:
 			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=2.0)
+			key = json_obj.keys()[0]
 		except:
 			json_obj = None
 
-		if json_obj:
-			key = json_obj.keys()[0]
+		if json_obj and 'albums' in json_obj[key]:
 
 			for mbid in json_obj[key]['albums'].keys():
 				if mbid == release_group:
