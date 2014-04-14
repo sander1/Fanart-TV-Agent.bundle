@@ -139,6 +139,28 @@ class FanartTVAgent(Agent.TV_Shows):
 
 		metadata.art.validate_keys(valid_names)
 
+		# Posters
+		valid_names = list()
+
+		try:
+			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+		except:
+			json_obj = None
+
+		if json_obj:
+			key = json_obj.keys()[0]
+
+			for img in json_obj[key]['tvposter']:
+				poster_url = img['url']
+				poster_url_preview = PREVIEW_URL % poster_url
+				valid_names.append(poster_url)
+
+				if poster_url not in metadata.posters:
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=1.0))
+					except: pass
+
+		metadata.posters.validate_keys(valid_names)
+
 		# Banners
 		valid_names = list()
 
