@@ -1,6 +1,7 @@
 API_KEY = '72519ab36caf49c09f69a028fb7f741d'
 MOVIE_ART_URL = 'http://api.fanart.tv/webservice/movie/%s/%%s/json/all/1/2/' % (API_KEY) # IMDb or TheMovieDB id
 TV_ART_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/all/1/2/' % (API_KEY) # TheTVDB id
+TV_SEASONPOSTER_URL = 'http://api.fanart.tv/webservice/series/%s/%%s/json/seasonposter/1/2/' % (API_KEY) # TheTVDB id, 'seasonposter' is not part of the 'all' call in TV_ART_URL
 ARTIST_ART_URL = 'http://api.fanart.tv/webservice/artist/%s/%%s/json/all/1/2/' % (API_KEY) # MusicBrainz artist id
 
 PREVIEW_URL = '%s/preview'
@@ -39,7 +40,7 @@ class FanartTVAgent(Agent.Movies):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -52,7 +53,7 @@ class FanartTVAgent(Agent.Movies):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=1.0))
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=0.5))
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
@@ -61,7 +62,7 @@ class FanartTVAgent(Agent.Movies):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(MOVIE_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -74,7 +75,7 @@ class FanartTVAgent(Agent.Movies):
 				valid_names.append(poster_url)
 
 				if poster_url not in metadata.posters:
-					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=1.0))
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5))
 					except: pass
 
 		metadata.posters.validate_keys(valid_names)
@@ -121,7 +122,7 @@ class FanartTVAgent(Agent.TV_Shows):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -134,7 +135,7 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=1.0))
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=0.5))
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
@@ -143,7 +144,7 @@ class FanartTVAgent(Agent.TV_Shows):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -156,7 +157,7 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(poster_url)
 
 				if poster_url not in metadata.posters:
-					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=1.0))
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5))
 					except: pass
 
 		metadata.posters.validate_keys(valid_names)
@@ -165,7 +166,7 @@ class FanartTVAgent(Agent.TV_Shows):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(TV_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -178,10 +179,35 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(banner_url)
 
 				if banner_url not in metadata.banners:
-					try: metadata.banners[banner_url] = Proxy.Preview(HTTP.Request(banner_url_preview, sleep=1.0))
+					try: metadata.banners[banner_url] = Proxy.Preview(HTTP.Request(banner_url_preview, sleep=0.5))
 					except: pass
 
 		metadata.banners.validate_keys(valid_names)
+
+		# Season posters
+		try:
+			json_obj = JSON.ObjectFromURL(TV_SEASONPOSTER_URL % metadata.id, sleep=1.0)
+			key = json_obj.keys()[0]
+		except:
+			json_obj = None
+
+		if json_obj and 'seasonposter' in json_obj[key]:
+
+			for s in media.seasons:
+				valid_names = list()
+
+				for img in json_obj[key]['seasonposter']:
+
+					if s == img['season']:
+						poster_url = img['url']
+						poster_url_preview = PREVIEW_URL % poster_url
+						valid_names.append(poster_url)
+
+					if poster_url not in metadata.seasons[s].posters:
+						try: metadata.seasons[s].posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5))
+						except: pass
+
+				metadata.seasons[s].posters.validate_keys(valid_names)
 
 ####################################################################################################
 class FanartTVAgent(Agent.Artist):
@@ -209,7 +235,7 @@ class FanartTVAgent(Agent.Artist):
 			# MusicBrainz ids can change over time while Last.fm is still listing an older id.
 			# If we do not get any data back: check if we can use a new/different MusicBrainz id.
 			try:
-				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=2.0)
+				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=1.0)
 			except:
 				json_obj = None
 
@@ -232,7 +258,7 @@ class FanartTVAgent(Agent.Artist):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -254,7 +280,7 @@ class FanartTVAgent(Agent.Artist):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % metadata.id, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
@@ -301,7 +327,7 @@ class FanartTVAgent(Agent.Album):
 			# MusicBrainz ids can change over time while Last.fm is still listing an older id.
 			# If we do not get any data back: check if we can use a new/different MusicBrainz id.
 			try:
-				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=2.0)
+				json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=1.0)
 			except:
 				json_obj = None
 
@@ -343,7 +369,7 @@ class FanartTVAgent(Agent.Album):
 		valid_names = list()
 
 		try:
-			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=2.0)
+			json_obj = JSON.ObjectFromURL(ARTIST_ART_URL % artist_mbid, sleep=1.0)
 			key = json_obj.keys()[0]
 		except:
 			json_obj = None
