@@ -198,7 +198,7 @@ class FanartTVAgent(Agent.TV_Shows):
 
 				for img in json_obj[key]['seasonposter']:
 
-					if s == img['season']:
+					if 'season' in img and s == img['season']:
 						poster_url = img['url']
 						poster_url_preview = PREVIEW_URL % poster_url
 						valid_names.append(poster_url)
