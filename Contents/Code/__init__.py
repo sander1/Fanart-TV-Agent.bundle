@@ -9,6 +9,8 @@ MB_ARTIST = 'http://musicbrainz.org/ws/2/artist/%s'
 MB_RELEASE = 'http://musicbrainz.org/ws/2/release/%s?inc=release-groups'
 MB_NS = {'a': 'http://musicbrainz.org/ns/mmd-2.0#'}
 
+RE_KEY_CHECK = Regex('[a-f0-9]{32}')
+
 ####################################################################################################
 def Start():
 
@@ -18,9 +20,11 @@ def Start():
 def GetJSON(url):
 
 	http_headers = {
-		'api-key': API_KEY,
-		'client-key': Prefs['personal_api_key']
+		'api-key': API_KEY
 	}
+
+	if RE_KEY_CHECK.search(Prefs['personal_api_key']):
+		http_headers['client-key'] = Prefs['personal_api_key']
 
 	return JSON.ObjectFromURL(url, headers=http_headers, sleep=1.0)
 
