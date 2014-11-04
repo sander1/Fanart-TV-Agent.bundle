@@ -23,7 +23,7 @@ def GetJSON(url):
 		'api-key': API_KEY
 	}
 
-	if RE_KEY_CHECK.search(Prefs['personal_api_key']):
+	if Prefs['personal_api_key'] and RE_KEY_CHECK.search(Prefs['personal_api_key']):
 		http_headers['client-key'] = Prefs['personal_api_key']
 
 	return JSON.ObjectFromURL(url, headers=http_headers, sleep=1.0)
