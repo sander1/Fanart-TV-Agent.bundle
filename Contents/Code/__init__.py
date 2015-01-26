@@ -65,7 +65,7 @@ class FanartTVAgent(Agent.Movies):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
@@ -86,7 +86,7 @@ class FanartTVAgent(Agent.Movies):
 				valid_names.append(poster_url)
 
 				if poster_url not in metadata.posters:
-					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.posters.validate_keys(valid_names)
@@ -145,7 +145,7 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
@@ -166,7 +166,7 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(poster_url)
 
 				if poster_url not in metadata.posters:
-					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.posters.validate_keys(valid_names)
@@ -187,34 +187,44 @@ class FanartTVAgent(Agent.TV_Shows):
 				valid_names.append(banner_url)
 
 				if banner_url not in metadata.banners:
-					try: metadata.banners[banner_url] = Proxy.Preview(HTTP.Request(banner_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.banners[banner_url] = Proxy.Preview(HTTP.Request(banner_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.banners.validate_keys(valid_names)
 
 		# Season posters
-		try:
-			json_obj = GetJSON(TV_ART_URL % (metadata.id))
-		except:
-			json_obj = None
+		@parallelize
+		def UpdateSeasons():
 
-		if json_obj and 'seasonposter' in json_obj:
-
+			# Loop over seasons
 			for s in media.seasons:
-				valid_names = list()
+				season = metadata.seasons[s]
 
-				for img in json_obj['seasonposter']:
+				# Set season metadata
+				@task
+				def UpdateSeason(season=season, s=s):
 
-					if 'season' in img and s == img['season']:
-						poster_url = img['url']
-						poster_url_preview = PREVIEW_URL % (poster_url)
-						valid_names.append(poster_url)
+					try:
+						json_obj = GetJSON(TV_ART_URL % (metadata.id))
+					except:
+						json_obj = None
 
-					if poster_url not in metadata.seasons[s].posters:
-						try: metadata.seasons[s].posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
-						except: pass
+					valid_names = list()
 
-				metadata.seasons[s].posters.validate_keys(valid_names)
+					if json_obj and 'seasonposter' in json_obj:
+
+						for img in json_obj['seasonposter']:
+
+							if 'season' in img and img['season'] == s:
+								poster_url = img['url']
+								poster_url_preview = PREVIEW_URL % (poster_url)
+								valid_names.append(poster_url)
+
+								if poster_url not in season.posters:
+									try: season.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5).content)
+									except: pass
+
+					season.posters.validate_keys(valid_names)
 
 ####################################################################################################
 class FanartTVAgent(Agent.Artist):
@@ -277,7 +287,7 @@ class FanartTVAgent(Agent.Artist):
 				valid_names.append(art_url)
 
 				if art_url not in metadata.art:
-					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.art[art_url] = Proxy.Preview(HTTP.Request(art_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.art.validate_keys(valid_names)
@@ -298,7 +308,7 @@ class FanartTVAgent(Agent.Artist):
 				valid_names.append(poster_url)
 
 				if poster_url not in metadata.posters:
-					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+					try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5).content)
 					except: pass
 
 		metadata.posters.validate_keys(valid_names)
@@ -388,7 +398,7 @@ class FanartTVAgent(Agent.Album):
 						valid_names.append(poster_url)
 
 						if poster_url not in metadata.posters:
-							try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, cacheTime=CACHE_1MONTH, sleep=0.5).content)
+							try: metadata.posters[poster_url] = Proxy.Preview(HTTP.Request(poster_url_preview, sleep=0.5).content)
 							except: pass
 
 					break
