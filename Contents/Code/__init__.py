@@ -73,7 +73,8 @@ def SortMedia(json, lang):
 		images.append({
 			'score': score,
 			'url': img['url'],
-			'likes': int(img['likes'])
+			'likes': int(img['likes']),
+			'season': img['season'] if 'season' in img else None
 		})
 
 	images = sorted(images, key=lambda k: (k['score'], k['likes']), reverse=True)
