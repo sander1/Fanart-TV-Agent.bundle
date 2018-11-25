@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.plexapp.agents.fanarttv</string>
+	<string>sander1.plexagents.fanarttv</string>
 	<key>PlexAgentAttributionText</key>
 	<string>
 		&lt;a href=&quot;http://fanart.tv&quot;&gt;Fanart.tv&lt;/a&gt; is a community driven website providing fanart for TV shows, movies and artists.&lt;br/&gt;
