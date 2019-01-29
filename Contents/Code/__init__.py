@@ -1,4 +1,4 @@
-API_KEY = '72519ab36caf49c09f69a028fb7f741d'
+API_KEY = '8a0e8885474fec00a60a009da33d0894'
 MOVIE_ART_URL = 'https://webservice.fanart.tv/v3/movies/%s' # IMDb or TheMovieDB id
 TV_ART_URL = 'https://webservice.fanart.tv/v3/tv/%s' # TheTVDB id
 ARTIST_ART_URL = 'https://webservice.fanart.tv/v3/music/%s' # MusicBrainz artist id
