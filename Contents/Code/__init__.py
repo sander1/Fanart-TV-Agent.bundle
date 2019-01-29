@@ -84,7 +84,7 @@ def SortMedia(json, lang):
 ####################################################################################################
 class FanartTVAgent(Agent.Movies):
 
-	name = 'Fanart.tv'
+	name = "sander1's Fanart.tv Agent"
 	languages = [Locale.Language.NoLanguage]
 	primary_provider = False
 	contributes_to = [
@@ -155,7 +155,7 @@ class FanartTVAgent(Agent.Movies):
 ####################################################################################################
 class FanartTVAgent(Agent.TV_Shows):
 
-	name = 'Fanart.tv'
+	name = "sander1's Fanart.tv Agent"
 	languages = [Locale.Language.NoLanguage]
 	primary_provider = False
 	contributes_to = [
@@ -306,7 +306,7 @@ class FanartTVAgent(Agent.TV_Shows):
 ####################################################################################################
 class FanartTVAgent(Agent.Artist):
 
-	name = 'Fanart.tv'
+	name = "sander1's Fanart.tv Agent"
 	languages = [Locale.Language.NoLanguage]
 	primary_provider = False
 	contributes_to = [
@@ -401,7 +401,7 @@ class FanartTVAgent(Agent.Artist):
 ####################################################################################################
 class FanartTVAgent(Agent.Album):
 
-	name = 'Fanart.tv'
+	name = "sander1's Fanart.tv Agent"
 	languages = [Locale.Language.NoLanguage]
 	primary_provider = False
 	contributes_to = [
