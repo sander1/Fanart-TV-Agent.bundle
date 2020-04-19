@@ -10,8 +10,6 @@ MB_ARTIST = 'https://musicbrainz.plex.tv/ws/2/artist/%s'
 MB_RELEASE = 'https://musicbrainz.plex.tv/ws/2/release/%s?inc=release-groups'
 MB_NS = {'a': 'http://musicbrainz.org/ns/mmd-2.0#'}
 
-RE_KEY_CHECK = Regex('[a-f0-9]{32}')
-
 ####################################################################################################
 def Start():
 
